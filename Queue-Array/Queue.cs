@@ -14,20 +14,29 @@ namespace Queue_Array
         public Queue()
         {
             data = new T[5];
-            tailIndex = 0;
-            headIndex = 0;
+            tailIndex = -1;
+            headIndex = -1;
             Count = 0;
         }
 
+        public bool IsEmpty() => Count == 0;
+        public void Clear()
+        {
+            data = new T[5];
+        }
+        public T Peek()
+        {
+            return data[headIndex];
+        }
         public void Enqueue(T value)
         {
             if(Count >= data.Length) 
             {
-                increaseSize();
+                reSize(data.Length * 2);
             }
             if (Count == 0)
             {
-                headIndex = Count;
+                headIndex = 0;
                 tailIndex = headIndex;
             }
             
@@ -39,27 +48,25 @@ namespace Queue_Array
         }
         public T Dequeue()
         {
-            T temp = data[headIndex % data.Length - 1];
+            if(Count <= data.Length / 4)
+            {
+                reSize(data.Length / 2);
+            }
+            T temp = data[headIndex % data.Length];
             headIndex++;
+            Count--;
             return temp;
         }
-        public void increaseSize()
+        public void reSize(int length)
         {
-            T[] temp = new T[data.Length * 2];
-            for (int i = 0; i < data.Length; i++)
-            {
-                temp[i] = data[(headIndex + i) % data.Length-1];
-            }
-            data = temp;
-        }
-        public void decreaseSize()
-        {
-            T[] temp = new T[data.Length / 2];
+            T[] temp = new T[length];
             for (int i = 0; i < temp.Length; i++)
             {
-                temp[i] = data[i];
+                temp[i] = data[(headIndex + i) % data.Length];
             }
+            headIndex = 0;
             data = temp;
         }
+      
     }
 }
